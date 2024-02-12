@@ -1,0 +1,36 @@
+SQL Project
+There are 3 tables:
+1- Major (MAJOR_ID, MAJOR_NAME)
+2- Instructor (INSTID, NAME, HIREDATE, SAL, MAJOR)
+3- Student (STUID, NAME, STADR, PHONE, GPA, SUPERVISOR_ID, MAJOR)
+
+The following tasks are needed:
+1)	Display all students whose GPA is less than the GPA of Arwa and whose major is the same as Fatima. 
+select * from STUDENT where GPA < (select gpa from STUDENT where name='Arwa') and major in (select major from student where name='Fatima')
+
+2)	Write a query to display the student name and GPA for all students who have both the major and address as “Ahmad”. Exclude Ahmad. 
+select NAME, GPA from STUDENT where major in (select major from student where name='Ahmad') and STADR in (select STADR from student where name='Ahmad') and name!='Ahmad'
+
+3)	Write a query to display the instructor id, and hiredate for all instructors who earn more than the average salary in major number 2. Sort the results in descending order of salary. 
+select INSTID, HIREDATE from instructor where SAL > (select AVG(sal) from instructor where major=2) ORDER BY sal desc
+
+4)	Write a query to display the student’s name and student address for all students whose supervisor name length is more than 4 characters. 
+select student.name, STADR from student, instructor where (student.SUPERVISOR_ID=instructor.INSTID and length(instructor.name)>4)
+
+5)	Write a query to display the instructor name, instructor id, and hiredate of any instructor whose major number and salary match the major number and salary of any instructor hired after 2000. 
+select name, INSTID, HIREDATE from instructor where (major,sal) in (select major,sal from instructor where TO_CHAR(hiredate,'YYYY') > 2000)
+
+6)	Display the information of the instructor who has the maximum number of students under his supervision.
+select * from instructor where INSTID in (select SUPERVISOR_ID from student group by SUPERVISOR_ID having count(SUPERVISOR_ID)=(select max(count(SUPERVISOR_ID)) from student group by SUPERVISOR_ID))
+
+7)	Display the Major name of the best student (who has the max GPA). In this example the maximum GPA is for Anas and his major is Software Engineering so your query should retrieve Software Engineering.
+select MAJOR_NAME from major where MAJOR_ID in (select MAJOR from student where gpa = (select max(gpa) from student))
+
+8)	Display all departments (majors) where at least 2 instructors are working in it.
+select * from major where MAJOR_ID in (select major from instructor group by major having count(major)>=2)
+
+9)	Write a query to display all instructors who belong to a major that contains 2 or more instructors.
+ select * from instructor where major in (select major from instructor group by major having count(major)>=2)
+
+
+
